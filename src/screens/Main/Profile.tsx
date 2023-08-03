@@ -70,7 +70,7 @@ export default function Profile({navigation}: RootStackScreenProps<'Profile'>) {
             justifyContent: 'space-between',
           }}>
           <View style={{flexDirection: 'column', alignItems: 'flex-start'}}>
-            <BoldText text50>{store.name || 'Store Name'}</BoldText>
+            <BoldText text50>{store.name || 'Tamu Praisserie'}</BoldText>
             <Text text70>
               {user.contact.ISD} {user.contact.number}
             </Text>

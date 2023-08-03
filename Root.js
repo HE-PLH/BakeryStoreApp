@@ -1,4 +1,54 @@
-import {ColorSchemeName, StatusBar, Text} from 'react-native';
+import React, {Component} from 'react';
+// import {YellowBox} from 'react-native';
+
+
+
+import {createStackNavigator} from '@react-navigation/stack';
+const Stack = createStackNavigator();
+import {
+  DarkTheme,
+  DefaultTheme,
+  NavigationContainer,
+} from '@react-navigation/native';
+
+
+import FoodList from './src/screens/FoodList';
+import FoodDetails from './src/screens/FoodDetails';
+// import OrderSummary from './src/screens/OrderSummary';
+// import TrackOrder from './src/screens/TrackOrder';
+import ContactDriver from './src/screens/ContactDriver';
+
+// YellowBox.ignoreWarnings(['Setting a timer']);
+
+function RootNavigator() {
+  return (
+     <NavigationContainer>
+        <Stack.Navigator>
+
+            <Stack.Screen name="FoodList" component={FoodList} />
+            <Stack.Screen name="FoodDetails" component={FoodDetails} />
+            {/*<Stack.Screen name="OrderSummary" component={OrderSummary} />*/}
+            {/*<Stack.Screen name="TrackOrder" component={TrackOrder} />*/}
+            <Stack.Screen name="ContactDriver" component={ContactDriver} />
+
+        </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+class Router extends Component {
+  render() {
+
+    return <RootNavigator />;
+  }
+}
+
+export default Router;
+
+
+/*
+
+import {ColorSchemeName, StatusBar} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 import useColorScheme from './src/hooks/useColorScheme';
@@ -11,7 +61,7 @@ import {Provider} from 'react-redux';
 // handling auth
 import {ApolloProvider} from '@apollo/client';
 import {client} from './src/apollo/Provider';
-import {useEffect, useState} from 'react';
+import {useEffect} from 'react';
 
 // import {Colors} from 'react-native-ui-lib';
 
@@ -42,7 +92,7 @@ import Orders from './src/screens/Main/Orders';
 import QuickBill from './src/screens/Main/QuickBill';
 // import Sizes from './src/constants/Sizes';
 
-import AntDesign from 'react-native-vector-icons/FontAwesome';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import {useSelector} from 'react-redux';
 
@@ -57,12 +107,6 @@ import {
   RootTabParamList,
 } from '../../types';
 import Home from "./src/screens/Home";
-import FoodList from "./src/screens/FoodList";
-import ContactDriver from "./src/screens/ContactDriver";
-import {Dashboard, LoginScreen, RegisterScreen, ResetPasswordScreen, StartScreen} from "./src/screens";
-import {getSession} from "./src/utils/common";
-
-
 
 require('react-native-ui-lib/config').setConfig({appScheme: 'default'});
 enableLatestRenderer();
@@ -71,11 +115,11 @@ export default function App() {
   const colorScheme = useColorScheme();
 
   useEffect(() => {
-    /*Colors.loadColors({
+    /!*Colors.loadColors({
       primary: '#1da371',
       text: colorScheme === 'dark' ? '#eee' : '#111',
     });
-    Colors.loadSchemes(AppColors);*/
+    Colors.loadSchemes(AppColors);*!/
   }, [colorScheme]);
 
   return (
@@ -90,35 +134,14 @@ export default function App() {
 }
 
 function Navigation({colorScheme}: {colorScheme: ColorSchemeName}) {
-  const [user, setUser] = useState( false);
-
-  useEffect(() => {
-    getSession().then(({token, role}) => {
-      if (token) {
-        if (role === 'user') {
-          setUser({token, role});
-          // navigation.navigate('Root');
-        } else if (role === 'admin') {
-            setUser(token, role)
-            // navigation.navigate('RootUser');
-        }
-
-        // navigation.navigate('Root');
-      } else {
-        setUser(false)
-      }
-    });
-  }, []);
-  // const {user} = {};
-  // const {user} = ((state: any) => state.userReducer);
-
+  // const {user} = {user: {name: 'Pk'}};
+  // const {user} = useSelector((state: any) => state.userReducer);
 
   return (
     <NavigationContainer
       theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      {/*{user ? user.user==='user'?<UserRootNavigator/> :  user.user==='admin'?<RootNavigator/>: <UserRootNavigator/>: <AuthNavigator />}*/}
-      {/*<AuthNavigator />*/}
-        <UserRootNavigator />
+      {/!*{user ? <RootNavigator /> : <AuthNavigator />}*!/}
+      <RootNavigator />
     </NavigationContainer>
   );
 }
@@ -157,81 +180,35 @@ function RootNavigator() {
   );
 }
 
-function UserRootNavigator() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Root"
-        component={UserBottomTabNavigator}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="NotFound"
-        component={NotFoundScreen}
-        options={{title: 'Oops!'}}
-      />
-      <Stack.Group screenOptions={{presentation: 'modal', headerShown: false}}>
-        <Stack.Screen
-          name="OrderDetails"
-          component={OrderDetails}
-          initialParams={{
-            id: '' || undefined,
-          }}
-        />
-        <Stack.Screen name="Profile" component={Profile} />
-        <Stack.Screen name="Accounts" component={Accounts} />
-        <Stack.Screen name="Confirm" component={Confirm} />
-        <Stack.Screen name="EditInventory" component={EditInventory} />
-        <Stack.Screen name="StoreEdit" component={StoreEdit} />
-      </Stack.Group>
-    </Stack.Navigator>
-  );
-}
-
 function AuthNavigator() {
   return (
     <AuthStack.Navigator>
       <AuthStack.Screen
         name="Onboarding"
-        component={StartScreen}
+        component={Onboarding}
         options={{headerShown: false}}
       />
       <AuthStack.Screen
-        name="LoginScreen"
-        component={LoginScreen}
+        name="Login"
+        component={Login}
         options={{title: 'Login', headerShown: false}}
       />
       <AuthStack.Screen
-        name="RegisterScreen"
-        component={RegisterScreen}
+        name="Register"
+        component={Register}
         options={{title: 'Register', headerShown: false}}
-      />
-      <AuthStack.Screen
-        name="ResetPasswordScreen"
-        component={ResetPasswordScreen}
-        options={{title: 'Register', headerShown: false}}
-      />
-      <AuthStack.Screen
-        name="Dashboard"
-        component={Dashboard}
-        options={{title: 'Register', headerShown: false}}
-      />
-        <Stack.Screen
-        name="Root"
-        component={UserBottomTabNavigator}
       />
     </AuthStack.Navigator>
   );
 }
 
-/**
+/!**
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
  * https://reactnavigation.org/docs/bottom-tab-navigator
- */
+ *!/
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
-
   return (
     <BottomTab.Navigator
       initialRouteName="Store"
@@ -248,31 +225,11 @@ function BottomTabNavigator() {
         options={{
           title: 'Store',
           tabBarIcon: ({color}) => (
-            // <TabBarIcon name="shoppingcart" color={color} />
-              <Text style={{color: Colors.white}}>Inventory</Text>
+            <TabBarIcon name="shoppingcart" color={color} />
           ),
         }}
       />
-        <BottomTab.Screen
-        name="CakeList"
-        component={FoodList}
-        options={{
-          title: 'Cakelist',
-          lazy: false,
-            tabBarIcon: ({color}) => <Text style={{color: Colors.white}}>Products</Text>,
-        }}
-      />
-        <BottomTab.Screen
-        name="ContactDriver"
-        component={ContactDriver}
-        options={{
-          title: 'ContactDriver',
-          lazy: false,
-          tabBarIcon: ({color}) => <Text style={{color: Colors.white}}>Contact us</Text>,
-        }}
-      />
-
-      {/*<BottomTab.Screen
+      {/!*<BottomTab.Screen
         name="Orders"
         component={Orders}
         options={{
@@ -290,70 +247,14 @@ function BottomTabNavigator() {
           title: 'Quick Bill',
           tabBarIcon: ({color}) => <TabBarIcon name="qrcode" color={color} />,
         }}
-      />*/}
+      />*!/}
     </BottomTab.Navigator>
   );
 }
 
-function UserBottomTabNavigator() {
-
-  return (
-    <BottomTab.Navigator
-      initialRouteName="CakeList"
-      screenOptions={{
-        tabBarActiveTintColor: Colors.primary,
-        headerShown: false,
-        tabBarShowLabel: false,
-        tabBarActiveBackgroundColor: Colors.$backgroundDefault,
-        tabBarInactiveBackgroundColor: Colors.$backgroundDefault,
-      }}>
-      <BottomTab.Screen
-        name="CakeList"
-        component={FoodList}
-        options={{
-          title: 'CakeList',
-          tabBarIcon: ({color}) => (
-            // <TabBarIcon name="shoppingcart" color={color} />
-              <Text style={{color: Colors.white}}>Inventory</Text>
-          ),
-        }}
-      />
-        <BottomTab.Screen
-        name="ContactDriver"
-        component={ContactDriver}
-        options={{
-          title: 'ContactDriver',
-          lazy: false,
-          tabBarIcon: ({color}) => <Text style={{color: Colors.white}}>Contact us</Text>,
-        }}
-      />
-
-      {/*<BottomTab.Screen
-        name="Orders"
-        component={Orders}
-        options={{
-          title: 'Orders',
-          lazy: false,
-          tabBarIcon: ({color}) => <TabBarIcon name="bars" color={color} />,
-        }}
-      />
-      <BottomTab.Screen
-        name="QuickBill"
-        component={QuickBill}
-        options={{
-          unmountOnBlur: true,
-          tabBarHideOnKeyboard: true,
-          title: 'Quick Bill',
-          tabBarIcon: ({color}) => <TabBarIcon name="qrcode" color={color} />,
-        }}
-      />*/}
-    </BottomTab.Navigator>
-  );
-}
-
-/**
+/!**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
+ *!/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof AntDesign>['name'];
   color: string;
@@ -362,3 +263,4 @@ function TabBarIcon(props: {
     <AntDesign style={{marginBottom: -3}} {...props} />
   );
 }
+*/

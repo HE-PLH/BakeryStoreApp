@@ -32,7 +32,8 @@ import Sizes from '../../constants/Sizes';
 import {removeUser} from '../../redux/Common/actions';
 import Stats from '../../components/Store/Stats';
 import axios from 'axios';
-import MyTable from "../../components/Store/MyTable";
+import MyTable from '../../components/Store/MyTable';
+import {ORDER_PAID} from '../../apollo/graphql/Store/orders';
 
 export default function Store({navigation}) {
   // const {store} = useSelector((state: any) => state.storeReducer);
@@ -41,6 +42,12 @@ export default function Store({navigation}) {
   const [inventoryProducts, setInventoryProducts] = useState<
     Array<ProductProps>
   >([]);
+  const [storeTableHead, setStoreTableHead] = useState([
+    // {name: 'Name', label: 'Name', align: 'left'},
+    {name: 'Description', label: 'Description', align: 'left'},
+    {name: 'Quantity', label: 'Quantity', align: 'left'},
+    // {name: 'Unit', label: 'Unit', align: 'left'},
+  ]);
 
   /*const {id: inventoryId, inventory} = useSelector(
     (state: any) => state.inventoryReducer,
@@ -50,9 +57,11 @@ export default function Store({navigation}) {
 
   /*const dispatch: any = useDispatch();*/
   useEffect(() => {
-    axios.get('https://joylink-server.up.railway.app/api/stocks').then(response => {
-      setInventoryProducts(response.data.info);
-    });
+    /*axios
+      .get('https://joylink-server.up.railway.app/api/stocks')
+      .then(response => {
+        setInventoryProducts(response.data.info);
+      });*/
   }, []);
 
   function addToEdited(item: ProductProps) {
@@ -182,7 +191,6 @@ export default function Store({navigation}) {
   }*/
 
   return (
-
     <Screen>
       {edited.length > 0 ? (
         <View
@@ -200,7 +208,9 @@ export default function Store({navigation}) {
             round={false}
             borderRadius={10}
             // onPress={() => edit({variables: {products: edited}})}
-          >Confirm edit</TouchableOpacity>
+          >
+            Confirm edit
+          </TouchableOpacity>
         </View>
       ) : (
         <TouchableOpacity
@@ -235,7 +245,7 @@ export default function Store({navigation}) {
       )}
       <TabHeader
         icon="user"
-        name={'Store Name'}
+        name={'Tamu Praisserie'}
         logo={false}
         iconPress={() => navigation.navigate('Profile')}
         namePress={() => {}}
@@ -255,7 +265,7 @@ export default function Store({navigation}) {
                   : 'Once accepted, view in Orders tab'
               }
               body={
-              <View />
+                <View />
                 /*<FlatList
                   data={['orders'].filter(
                     (order: any) => order.state.order.accepted === false,
@@ -285,16 +295,17 @@ export default function Store({navigation}) {
                 'All products in your store are displayed here. Search or Add products here'
               }
               body={
-                <View flex>
-                  {console.log(inventoryProducts)}
+                <View flex style={{overflow: 'scroll'}}>
                   {inventoryProducts.length > 0 && (
-
                     <>
-                       <TouchableOpacity
-                        onPress={() => navigation.navigate("EditInventory")}
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate('EditInventory')}
                         placeholder="Search Products..."
                       />
-                      <MyTable data={inventoryProducts}/>
+                      <MyTable
+                        data={inventoryProducts}
+                        tableHead={storeTableHead}
+                      />
                     </>
                   )}
                 </View>

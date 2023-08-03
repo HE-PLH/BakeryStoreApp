@@ -1,5 +1,5 @@
 let Colors = {
-  $backgroundDefault: 'white',
+  $backgroundDefault: 'orange',
   $backgroundDarkElevated: 'blue',
   $backgroundDisabled: 'red',
   primary: '#1da371',
