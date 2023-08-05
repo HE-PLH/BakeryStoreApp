@@ -55,8 +55,9 @@ export class AppContextProvider extends React.Component {
 }
 //
 
-export const withAppContextProvider = ChildComponent => props => (
+/*
+export const WithAppContextProvider = ChildComponent => props => (
   <AppContextProvider>
     <ChildComponent {...props} />
   </AppContextProvider>
-);
+);*/

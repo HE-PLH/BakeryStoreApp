@@ -24,5 +24,6 @@
         <meta-data
     android:name="com.google.android.geo.API_KEY"
     android:value="AIzaSyAl4GcMqFWRSxy9M2ZkgVp_AM5mmZLMlBI" />
+        android:usesCleartextTraffic="true"
     </application>
 </manifest>

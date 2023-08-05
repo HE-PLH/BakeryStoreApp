@@ -7,7 +7,6 @@ import useColorScheme from './src/hooks/useColorScheme';
 import {Provider} from 'react-redux';
 // import {Store} from './src/redux/store';
 
-
 // handling auth
 import {ApolloProvider} from '@apollo/client';
 import {client} from './src/apollo/Provider';
@@ -15,7 +14,7 @@ import {useEffect, useState} from 'react';
 
 // import {Colors} from 'react-native-ui-lib';
 
-import Colors from './src/assets/colors'
+import Colors from './src/assets/colors';
 // import AppColors from './src/constants/Colors';
 
 import {enableLatestRenderer} from 'react-native-maps';
@@ -31,7 +30,7 @@ import OrderDetails from './src/screens/Main/OrderDetails';
 import Profile from './src/screens/Main/Profile';
 import Accounts from './src/screens/Main/Accounts';
 import Confirm from './src/screens/Main/Confirm';
-import EditInventory from './src/screens/Main/EditInventory';
+// import EditProducts from './src/screens/Main/EditProducts';
 import StoreEdit from './src/screens/Main/StoreEdit';
 import Store from './src/screens/Main/Store';
 import Onboarding from './src/screens/Auth/Onboarding';
@@ -46,23 +45,26 @@ import AntDesign from 'react-native-vector-icons/FontAwesome';
 
 import {useSelector} from 'react-redux';
 
-
 import _Store from './src/screens/Main/Store';
-
-
 
 import {
   AuthStackParamList,
   RootStackParamList,
   RootTabParamList,
 } from '../../types';
-import Home from "./src/screens/Home";
-import FoodList from "./src/screens/FoodList";
-import ContactDriver from "./src/screens/ContactDriver";
-import {Dashboard, LoginScreen, RegisterScreen, ResetPasswordScreen, StartScreen} from "./src/screens";
-import {getSession} from "./src/utils/common";
-
-
+import Home from './src/screens/Home';
+import FoodList from './src/screens/FoodList';
+import ContactDriver from './src/screens/ContactDriver';
+import {
+  Dashboard,
+  LoginScreen,
+  RegisterScreen,
+  ResetPasswordScreen,
+  StartScreen,
+} from './src/screens';
+import {getSession} from './src/utils/common';
+import FoodDetails from './src/screens/FoodDetails';
+import {AppContextProvider} from './GlobalContext';
 
 require('react-native-ui-lib/config').setConfig({appScheme: 'default'});
 enableLatestRenderer();
@@ -79,18 +81,20 @@ export default function App() {
   }, [colorScheme]);
 
   return (
-    <SafeAreaProvider>
-          <Navigation colorScheme={colorScheme} />
-          <StatusBar
-            backgroundColor={Colors.$backgroundDefault}
-            barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
-          />
-    </SafeAreaProvider>
+    <AppContextProvider>
+      <SafeAreaProvider>
+        <Navigation colorScheme={colorScheme} />
+        <StatusBar
+          backgroundColor={Colors.$backgroundDefault}
+          barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
+        />
+      </SafeAreaProvider>
+    </AppContextProvider>
   );
 }
 
 function Navigation({colorScheme}: {colorScheme: ColorSchemeName}) {
-  const [user, setUser] = useState( false);
+  const [user, setUser] = useState(false);
 
   useEffect(() => {
     getSession().then(({token, role}) => {
@@ -99,26 +103,35 @@ function Navigation({colorScheme}: {colorScheme: ColorSchemeName}) {
           setUser({token, role});
           // navigation.navigate('Root');
         } else if (role === 'admin') {
-            setUser(token, role)
-            // navigation.navigate('RootUser');
+          setUser(token, role);
+          // navigation.navigate('RootUser');
         }
 
         // navigation.navigate('Root');
       } else {
-        setUser(false)
+        setUser(false);
       }
     });
   }, []);
   // const {user} = {};
   // const {user} = ((state: any) => state.userReducer);
 
-
   return (
     <NavigationContainer
       theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      {/*{user ? user.user==='user'?<UserRootNavigator/> :  user.user==='admin'?<RootNavigator/>: <UserRootNavigator/>: <AuthNavigator />}*/}
+      {user ? (
+        user.user === 'user' ? (
+          <UserRootNavigator />
+        ) : user.user === 'admin' ? (
+          <RootNavigator />
+        ) : (
+          <UserRootNavigator />
+        )
+      ) : (
+        <AuthNavigator />
+      )}
       {/*<AuthNavigator />*/}
-        <UserRootNavigator />
+      {/*  <UserRootNavigator />*/}
     </NavigationContainer>
   );
 }
@@ -150,7 +163,7 @@ function RootNavigator() {
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="Accounts" component={Accounts} />
         <Stack.Screen name="Confirm" component={Confirm} />
-        <Stack.Screen name="EditInventory" component={EditInventory} />
+        <Stack.Screen name="EditProducts" component={EditProducts} />
         <Stack.Screen name="StoreEdit" component={StoreEdit} />
       </Stack.Group>
     </Stack.Navigator>
@@ -181,7 +194,7 @@ function UserRootNavigator() {
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="Accounts" component={Accounts} />
         <Stack.Screen name="Confirm" component={Confirm} />
-        <Stack.Screen name="EditInventory" component={EditInventory} />
+        {/*<Stack.Screen name="EditProducts" component={EditProducts} />*/}
         <Stack.Screen name="StoreEdit" component={StoreEdit} />
       </Stack.Group>
     </Stack.Navigator>
@@ -216,9 +229,35 @@ function AuthNavigator() {
         component={Dashboard}
         options={{title: 'Register', headerShown: false}}
       />
-        <Stack.Screen
-        name="Root"
-        component={UserBottomTabNavigator}
+      <Stack.Screen name="Root" component={UserBottomTabNavigator} />
+      <Stack.Screen
+        name="FoodDetails"
+        component={FoodDetails}
+        options={{
+          title: 'Product Details',
+        }}
+      />
+    </AuthStack.Navigator>
+  );
+}
+
+
+function FoodListNavigator() {
+  return (
+    <AuthStack.Navigator>
+      <Stack.Screen
+        name="Foodlist"
+        component={FoodList}
+        options={{title: 'FoodList', headerShown: true}}
+
+      />
+      <Stack.Screen
+        name="FoodDetails"
+        component={FoodDetails}
+        options={{
+          title: 'FoodDetails',
+          headerShown: true,
+        }}
       />
     </AuthStack.Navigator>
   );
@@ -231,7 +270,6 @@ function AuthNavigator() {
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
-
   return (
     <BottomTab.Navigator
       initialRouteName="Store"
@@ -249,26 +287,30 @@ function BottomTabNavigator() {
           title: 'Store',
           tabBarIcon: ({color}) => (
             // <TabBarIcon name="shoppingcart" color={color} />
-              <Text style={{color: Colors.white}}>Inventory</Text>
+            <Text style={{color: Colors.white}}>Inventory</Text>
           ),
         }}
       />
-        <BottomTab.Screen
+      <BottomTab.Screen
         name="CakeList"
-        component={FoodList}
+        component={FoodListNavigator}
         options={{
-          title: 'Cakelist',
-          lazy: false,
-            tabBarIcon: ({color}) => <Text style={{color: Colors.white}}>Products</Text>,
+          title: 'CakeList',
+          tabBarIcon: ({color}) => (
+            // <TabBarIcon name="shoppingcart" color={color} />
+            <Text style={{color: Colors.white}}>Products</Text>
+          ),
         }}
       />
-        <BottomTab.Screen
+      <BottomTab.Screen
         name="ContactDriver"
         component={ContactDriver}
         options={{
           title: 'ContactDriver',
           lazy: false,
-          tabBarIcon: ({color}) => <Text style={{color: Colors.white}}>Contact us</Text>,
+          tabBarIcon: ({color}) => (
+            <Text style={{color: Colors.white}}>Contact us</Text>
+          ),
         }}
       />
 
@@ -296,7 +338,6 @@ function BottomTabNavigator() {
 }
 
 function UserBottomTabNavigator() {
-
   return (
     <BottomTab.Navigator
       initialRouteName="CakeList"
@@ -309,22 +350,24 @@ function UserBottomTabNavigator() {
       }}>
       <BottomTab.Screen
         name="CakeList"
-        component={FoodList}
+        component={FoodListNavigator}
         options={{
           title: 'CakeList',
           tabBarIcon: ({color}) => (
             // <TabBarIcon name="shoppingcart" color={color} />
-              <Text style={{color: Colors.white}}>Inventory</Text>
+            <Text style={{color: Colors.white}}>Products</Text>
           ),
         }}
       />
-        <BottomTab.Screen
+      <BottomTab.Screen
         name="ContactDriver"
         component={ContactDriver}
         options={{
           title: 'ContactDriver',
           lazy: false,
-          tabBarIcon: ({color}) => <Text style={{color: Colors.white}}>Contact us</Text>,
+          tabBarIcon: ({color}) => (
+            <Text style={{color: Colors.white}}>Contact us</Text>
+          ),
         }}
       />
 
@@ -358,7 +401,5 @@ function TabBarIcon(props: {
   name: React.ComponentProps<typeof AntDesign>['name'];
   color: string;
 }) {
-  return (
-    <AntDesign style={{marginBottom: -3}} {...props} />
-  );
+  return <AntDesign style={{marginBottom: -3}} {...props} />;
 }
