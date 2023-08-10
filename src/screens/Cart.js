@@ -2,11 +2,10 @@ import React, {useState, useContext, useEffect, Component} from 'react';
 import {
   View,
   Text,
-  Button,
   TextInput,
   FlatList,
   StyleSheet,
-  TouchableOpacity,
+  TouchableOpacity, Alert,
 } from 'react-native';
 import {_axios} from './../utils/_axios';
 
@@ -16,32 +15,40 @@ import Config from 'react-native-config';
 import ListCard from '../components/ListCard';
 import {getToken} from '../utils/common';
 // import NavHeaderRight from "../components/NavHeaderRight";
+import {AppContext} from './../../GlobalContext';
 
 const BASE_URL =
   'https://tamuserver-production.up.railway.app/api/v1';
 // const BASE_URL = 'http://192.168.100.5:8000/api/v1';
 
-const FoodList = props => {
+const Cart = props => {
   const [foods, setFoods] = useState([]);
-  const [initial_list, setInitialList] = useState([]);
   const [query, setQuery] = useState('');
+  const [initial_list, setInitialList] = useState([]);
+  const [total, setTotal] = useState(0);
+  const {cart_items, removeCartItem} = useContext(AppContext);
 
   useEffect(() => {
-    async function fetchData() {
+    setFoods(cart_items);
+    setInitialList(cart_items);
+    let amount = cart_items.reduce((acc, item) => {
+      return acc + parseFloat(item.price)*parseFloat(item.qty);
+    }, 0);
+    setTotal(amount);
+    /*async function fetchData() {
       try {
         const token = await getToken();
         console.log(token);
-        const res = await _axios.get(`${BASE_URL}/product`, {
+        const res = await _axios.get(`${BASE_URL}/inventory`, {
           headers: {Authorization: `Bearer ${token}`},
         });
         setFoods(res.data);
-        setInitialList(res.data);
       } catch (err) {
         console.log('err: ', err);
       }
-    }
-    fetchData();
-  }, []);
+    }*/
+    // fetchData();
+  }, [cart_items]);
 
   const onChangeQuery = text => {
     setQuery(text);
@@ -68,13 +75,33 @@ const FoodList = props => {
     });
   };
 
+  const removeFromCart = (item, qty) => {
+    console.log('my item', item)
+    // const item_id = cart_items.findIndex(el => el.id !== item.id);
+    // console.log(item_id);
+    // if (item_id === -1) {
+    removeCartItem(item, qty);
+    Alert.alert(
+      'Remove from basket',
+      `${qty} ${item.name} was removed to the basket.`,
+    );
+
+    // } else {
+    /*Alert.alert(
+        'Added to basket',
+        `${qty} ${item.name} was added to the basket.`,
+      );
+      context.addToCart(item, qty);
+    }*/
+  };
+
   const renderFood = ({item}) => {
     if (item && !(item.images.indexOf('https') > -1)) {
       item.images = item.images ? item.images.replace('http', 'https') : '';
     }
     console.log(item);
     // item.images = item.images ? item.images.replace('http', 'https') : '';
-    return <ListCard item={item} viewItem={viewItem} />;
+    return <CartListCard item={item} viewItem={viewItem} removeFromCart={removeFromCart} />;
   };
 
   return (
@@ -100,11 +127,32 @@ const FoodList = props => {
         contentContainerStyle={styles.list}
         keyExtractor={item => item.id.toString()}
       />
+      <View style={{height: 100, display: 'flex', justifyContent: 'center'}}>
+        <View
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%',
+            height: 50,
+            borderWidth: 1,
+            borderStyle: 'solid',
+          }}>
+          <Text style={{fontSize: 26}}>Total: {total}</Text>
+        </View>
+        <Button mode="contained" onPress={()=>{
+          props.navigation.navigate('Shipping');
+        }
+        }>Proceed to Checkout</Button>
+      </View>
     </View>
   );
 };
 
 import Icon from 'react-native-vector-icons/Octicons';
+import CartListCard from '../components/CartListCard';
+import Header from '../components/Header';
+import Button from '../components/Button';
 
 const MenuIcon = ({navigate}) => (
   <Icon
@@ -114,16 +162,16 @@ const MenuIcon = ({navigate}) => (
     onPress={() => navigate('DrawerOpen')}
   />
 );
-FoodList.navigationOptions = ({navigation}) => ({
+/*FoodList.navigationOptions = ({ navigation }) => ({
   headerRight: () => (
     <TouchableOpacity
-    // style={styles.headerButton}
-    // onPress={() => navigation.openDrawer()}
+      // style={styles.headerButton}
+      // onPress={() => navigation.openDrawer()}
     >
       <MenuIcon name="menu" size={30} color="white" />
     </TouchableOpacity>
   ),
-});
+});*/
 
 const styles = StyleSheet.create({
   headerButtonContainer: {
@@ -152,4 +200,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FoodList;
+export default Cart;

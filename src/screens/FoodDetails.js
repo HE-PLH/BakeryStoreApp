@@ -16,8 +16,8 @@ const FoodDetails = props => {
 
   useEffect(() => {
     let _item = {};
-    if (route.params){
-      _item = route.params.item
+    if (route.params) {
+      _item = route.params.item;
     }
     // console.log('paraaaams', route.params.item)
     // _item = {
@@ -26,7 +26,7 @@ const FoodDetails = props => {
     //   description: 'Best Cake in town',
     //   id: 11,
     //   images:
-    //     'http://tamupatisserieserver-production.up.railway.app/static/images/black-forest-cake-cover-picture_k8F0ivA.jpg',
+    //     'http://tamuserver-production.up.railway.app/static/images/black-forest-cake-cover-picture_k8F0ivA.jpg',
     //   name: 'Black Forest',
     //   price: 120,
     //   quantity: 5,
@@ -40,23 +40,22 @@ const FoodDetails = props => {
   };
 
   const addToCart = (item, qty) => {
-
-    const item_id = context.cart_items.findIndex(
-      el => el.id !== item.id,
+    const item_id = context.cart_items.findIndex(el => el.id !== item.id);
+    console.log(item_id);
+    // if (item_id === -1) {
+    context.addToCart(item, qty);
+    Alert.alert(
+      'Added to basket',
+      `${qty} ${item.name} was added to the basket.`,
     );
-    console.log(item_id)
-    if (item_id === -1) {
-      Alert.alert(
+
+    // } else {
+    /*Alert.alert(
         'Added to basket',
         `${qty} ${item.name} was added to the basket.`,
       );
       context.addToCart(item, qty);
-    } else {
-      Alert.alert(
-        'Cannot add to basket',
-        'You can only order from one product for each order.',
-      );
-    }
+    }*/
   };
 
   return (

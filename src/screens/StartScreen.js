@@ -12,7 +12,7 @@ export default function StartScreen({navigation}) {
   return (
     <Background>
       <Logo />
-      <Header>Tamu Praisserie</Header>
+      <Header>Tamu Patisserie</Header>
       <Paragraph>Make your order today</Paragraph>
       <Button
         mode="contained"

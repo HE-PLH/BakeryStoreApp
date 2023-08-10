@@ -17,6 +17,7 @@ const ListCard = ({item, viewItem}) => {
         <View>
           <Text style={styles.title}>{item.name}</Text>
           <Text style={styles.subtitle}>Ksh {item.price}</Text>
+          <Text style={styles.subtitle1}>{item.description}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -43,6 +44,10 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     color: '#f60808',
+  },
+  subtitle1: {
+    fontSize: 14,
+    color: 'orange',
   },
 });
 

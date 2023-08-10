@@ -9,6 +9,12 @@ export class AppContextProvider extends React.Component {
     user_type: 'customer',
     room_id: '',
     room_name: '',
+    shipping_details: {
+      name: '',
+      country: '',
+      city: '',
+      phone: '',
+    },
   };
 
   constructor(props) {
@@ -22,9 +28,15 @@ export class AppContextProvider extends React.Component {
     });
   };
 
+  setShippingDetails = (item, f) => {
+    console.log(item);
+    this.setState({shipping_details: item});
+    f();
+  };
+
   addToCart = (item, qty) => {
     let found = this.state.cart_items.filter(el => el.id === item.id);
-    if (found.length == 0) {
+    if (found.length === 0) {
       this.setState(prevState => {
         return {cart_items: prevState.cart_items.concat({...item, qty})};
       });
@@ -40,6 +52,20 @@ export class AppContextProvider extends React.Component {
     }
   };
 
+  removeCartItem = (item, qty) => {
+    let found = this.state.cart_items.findIndex(el => el.id === item.id);
+    console.log(found, found > -1);
+    if (found > -1) {
+      this.setState(prevState => {
+        return {
+          cart_items: prevState.cart_items.filter(el => el.id !== item.id),
+        };
+      });
+    } else {
+      console.log('not found');
+    }
+  };
+
   render() {
     return (
       <AppContext.Provider
@@ -47,6 +73,8 @@ export class AppContextProvider extends React.Component {
           ...this.state,
           addToCart: this.addToCart,
           setRoom: this.setRoom,
+          removeCartItem: this.removeCartItem,
+          setShippingDetails: this.setShippingDetails,
         }}>
         {this.props.children}
       </AppContext.Provider>

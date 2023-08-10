@@ -322,7 +322,7 @@ export default function Register({
               <Text text70>Enter your store details below.</Text>
               <InputText
                 placeholder="Eg. Raj Superstore"
-                title="Tamu Praisserie"
+                title="Tamu Patisserie"
                 value={storeData.storeInfo.name}
                 onChange={(text: string) =>
                   setStoreData({

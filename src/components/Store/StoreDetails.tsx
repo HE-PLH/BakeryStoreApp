@@ -246,7 +246,7 @@ const StoreDetails = (props: DetailProps): JSX.Element => {
               },
             })
           }
-          title="Tamu Praisserie"
+          title="Tamu Patisserie"
           placeholder={data.storeInfo.name}
         />
         <InputText

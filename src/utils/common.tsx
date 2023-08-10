@@ -11,12 +11,22 @@ export const getToken = async () => {
     return null;
   }
 };
+export const getUser = async () => {
+  try {
+    const user = await AsyncStorage.getItem('user');
+    return user;
+  } catch (error) {
+    console.error('Error getting user from AsyncStorage:', error);
+    return null;
+  }
+};
 // Function to get the token from AsyncStorage
 export const getSession = async () => {
   try {
     const token = await AsyncStorage.getItem('token');
     const role = await AsyncStorage.getItem('role');
-    return {token, role};
+    const user = await AsyncStorage.getItem('user');
+    return {token, role, user: JSON.parse(user)};
   } catch (error) {
     console.error('Error getting token from AsyncStorage:', error);
     return null;
@@ -34,10 +44,11 @@ export const saveToken = async (token) => {
 };
 
 // Function to save the session to AsyncStorage
-export const saveSession = async (token, role) => {
+export const saveSession = async (token, role, user) => {
   try {
     await AsyncStorage.setItem('token', token);
     await AsyncStorage.setItem('role', role);
+    await AsyncStorage.setItem('user', JSON.stringify(user));
     console.log('Token saved successfully');
   } catch (error) {
     console.error('Error saving token to AsyncStorage:', error);

@@ -43,7 +43,7 @@ export default function RegisterScreen({navigation}) {
       if (response.status !== 201) {
         console.log(response.error);
       } else {
-        console.log(response.data)
+        console.log(response.data);
         // setUserSession(response.data.access_token, "Admin", response.data)
         navigation.navigate('LoginScreen');
         // navigate("/training");
@@ -58,7 +58,7 @@ export default function RegisterScreen({navigation}) {
   return (
     <Background>
       <BackButton goBack={navigation.goBack} />
-      <Header>Tamu Praisserie</Header>
+      <Header>Tamu Patisserie</Header>
       <Logo />
       <Header>Create Account</Header>
       <TextInput

@@ -39,8 +39,8 @@ export default function LoginScreen({ navigation }) {
         console.log(response.error);
       } else {
         console.log(response.data.access_token);
-        saveSession(response.data.access_token, response.data.role, response.data)
-        navigation.navigate('Root');
+        saveSession(response.data.access_token, response.data.role, response.data.user)
+        navigation.navigate('Home');
 
         // navigate("/training");
       }
@@ -54,7 +54,7 @@ export default function LoginScreen({ navigation }) {
   return (
     <Background>
       <BackButton goBack={navigation.goBack} />
-      <Header>Tamu Praisserie</Header>
+      <Header>Tamu Patisserie</Header>
       <Logo />
       <Header>Welcome back.</Header>
       <TextInput

@@ -245,7 +245,7 @@ export default function Store({navigation}) {
       )}
       <TabHeader
         icon="user"
-        name={'Tamu Praisserie'}
+        name={'Tamu Patisserie'}
         logo={false}
         iconPress={() => navigation.navigate('Profile')}
         namePress={() => {}}

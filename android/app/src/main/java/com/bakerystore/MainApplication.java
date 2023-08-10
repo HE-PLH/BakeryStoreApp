@@ -11,6 +11,7 @@ import com.facebook.soloader.SoLoader;
 import java.util.List;
 // import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.reactnativecommunity.geolocation.GeolocationPackage; // Add this import
+import com.oblador.vectoricons.VectorIconsPackage;
 
 
 
@@ -29,6 +30,7 @@ public class MainApplication extends Application implements ReactApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
 //           packages.add(new RNGestureHandlerPackage()); // Add this line
             new GeolocationPackage();
+            new VectorIconsPackage();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
           return packages;
