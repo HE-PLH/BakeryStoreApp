@@ -14,7 +14,7 @@ export const getToken = async () => {
 export const getUser = async () => {
   try {
     const user = await AsyncStorage.getItem('user');
-    return user;
+    return JSON.parse(user);
   } catch (error) {
     console.error('Error getting user from AsyncStorage:', error);
     return null;
@@ -69,6 +69,7 @@ export const removeSession = async () => {
   try {
     await AsyncStorage.removeItem('token');
     await AsyncStorage.removeItem('role');
+    await AsyncStorage.removeItem('user');
     console.log('Token removed successfully');
   } catch (error) {
     console.error('Error removing token from AsyncStorage:', error);

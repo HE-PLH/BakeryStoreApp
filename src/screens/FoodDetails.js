@@ -26,7 +26,7 @@ const FoodDetails = props => {
     //   description: 'Best Cake in town',
     //   id: 11,
     //   images:
-    //     'http://tamuserver-production.up.railway.app/static/images/black-forest-cake-cover-picture_k8F0ivA.jpg',
+    //     'http://tamupatisserieserver-production.up.railway.app/static/images/black-forest-cake-cover-picture_k8F0ivA.jpg',
     //   name: 'Black Forest',
     //   price: 120,
     //   quantity: 5,

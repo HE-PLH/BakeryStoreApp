@@ -2,7 +2,7 @@ import axios from 'axios';
 import {getToken} from "./common";
 
 const _axios = axios.create({
-  baseURL: 'https://tamuserver-production.up.railway.app',
+  baseURL: 'https://tamupatisserieserver-production.up.railway.app',
   withCredentials: true
 });
 

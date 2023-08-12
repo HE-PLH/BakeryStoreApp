@@ -33,7 +33,7 @@ import * as React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import NotFoundScreen from './src/screens/NotFoundScreen';
 import OrderDetails from './src/screens/Main/OrderDetails';
-import Profile from './src/screens/Main/Profile';
+import Profile from './src/screens/Profile';
 import Accounts from './src/screens/Main/Accounts';
 import Confirm from './src/screens/Main/Confirm';
 import ConfirmOrder from './src/screens/Confirm';
@@ -44,7 +44,7 @@ import Onboarding from './src/screens/Auth/Onboarding';
 import Login from './src/screens/Auth/Login';
 import Register from './src/screens/Auth/Register';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Orders from './src/screens/Main/Orders';
+
 import QuickBill from './src/screens/Main/QuickBill';
 // import Sizes from './src/constants/Sizes';
 
@@ -53,6 +53,9 @@ import AntDesign from 'react-native-vector-icons/FontAwesome';
 import {useSelector} from 'react-redux';
 
 import _Store from './src/screens/Main/Store';
+
+import MyOrders from "./src/screens/MyOrders";
+import Tutorials from "./src/screens/Tutorials";
 
 import {
   AuthStackParamList,
@@ -75,6 +78,7 @@ import {AppContextProvider} from './GlobalContext';
 import {_axios} from './src/utils/_axios';
 import Cart from "./src/screens/Cart";
 import Shipping from "./src/screens/shipping";
+import Thankyou from "./src/screens/Thankyou";
 
 require('react-native-ui-lib/config').setConfig({appScheme: 'default'});
 enableLatestRenderer();
@@ -176,7 +180,7 @@ function RootNavigator() {
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="Accounts" component={Accounts} />
         <Stack.Screen name="Confirm" component={Confirm} />
-        <Stack.Screen name="EditProducts" component={EditProducts} />
+        {/*<Stack.Screen name="EditProducts" component={EditProducts} />*/}
         <Stack.Screen name="StoreEdit" component={StoreEdit} />
       </Stack.Group>
     </Stack.Navigator>
@@ -242,7 +246,8 @@ function AuthNavigator() {
         component={Dashboard}
         options={{title: 'Register', headerShown: false}}
       />
-      <Stack.Screen name="Home" component={UserBottomTabNavigator} />
+
+      <AuthStack.Screen name="Home" options={{title: 'Home', headerShown: false}} component={UserRootNavigator} />
     </AuthStack.Navigator>
   );
 }
@@ -317,6 +322,12 @@ function FoodListNavigator({navigation}) {
         name="Confirm Order"
         component={ConfirmOrder}
         options={{title: 'Confirm Order', headerShown: true}}
+        // initialParams={{subjects: screens}}
+      />
+      <Stack.Screen
+        name="Thankyou"
+        component={Thankyou}
+        options={{title: 'Thankyou', headerShown: true}}
         // initialParams={{subjects: screens}}
       />
     </AuthStack.Navigator>
@@ -403,7 +414,6 @@ function UserBottomTabNavigator() {
       initialRouteName="CakeList"
       screenOptions={{
         tabBarActiveTintColor: Colors.primary,
-        headerShown: false,
         tabBarShowLabel: false,
         tabBarActiveBackgroundColor: Colors.$backgroundDefault,
         tabBarInactiveBackgroundColor: Colors.$backgroundDefault,
@@ -412,13 +422,44 @@ function UserBottomTabNavigator() {
         name="CakeList"
         component={FoodListNavigator}
         options={{
+            headerShown: false,
           title: 'CakeList',
           tabBarIcon: ({color}) => (
-            <TabBarIcon name="list" color={color} size={30} />
+            <TabBarIcon name="list" color={'#fff'} size={30} />
             // <Text style={{color: Colors.white}}>Subjects</Text>
           ),
         }}
       />
+        <BottomTab.Screen
+        name="Tutorials"
+        component={Tutorials}
+        options={{
+          title: 'Tutorials',
+          lazy: false,
+          tabBarIcon: ({color}) => <TabBarIcon size={30} name="graduation-cap" color={'#fff'} />,
+        }}
+      />
+        <BottomTab.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          title: 'Profile',
+          lazy: false,
+            headerShown: true,
+          tabBarIcon: ({color}) => <TabBarIcon size={30} name="user" color={'#fff'} />,
+        }}
+      />
+        <BottomTab.Screen
+        name="MyOrders"
+        component={MyOrders}
+        options={{
+          title: 'MyOrders',
+          lazy: false,
+            headerShown: true,
+          tabBarIcon: ({color}) => <TabBarIcon size={30} name="credit-card" color={'#fff'} />,
+        }}
+      />
+
       <BottomTab.Screen
         name="ContactDriver"
         component={ContactDriver}
@@ -427,7 +468,7 @@ function UserBottomTabNavigator() {
           lazy: false,
           tabBarIcon: ({color}) => (
             // <Text style={{color: Colors.white}}>Contact us</Text>
-            <TabBarIcon name="phone" color={color} size={30} rotation={270} />
+            <TabBarIcon name="phone" color={'#fff'} size={30} rotation={270} />
           ),
         }}
       />

@@ -11,6 +11,7 @@ const CHATKIT_SECRET_KEY = Config.CHATKIT_SECRET_KEY;
 const CHATKIT_TOKEN_PROVIDER_ENDPOINT = Config.CHATKIT_TOKEN_PROVIDER_ENDPOINT;
 
 import {AppContext} from '../../GlobalContext';
+import Header from "../components/Header";
 
 class ContactDriver extends Component {
   static navigationOptions = ({navigation}) => {
@@ -83,14 +84,19 @@ class ContactDriver extends Component {
 
     return (
       <View style={styles.wrapper}>
-        <GiftedChat
+        <View style={{backgroundColor: '#fff', flex: 1, display: 'flex', alignItems:'center', justifyContent: 'center'}}>
+        <Header>Contact us through:</Header>
+        <Header>Phone: 0768552485</Header>
+        <Header>Email: jenifa@gmail.com</Header>
+          </View>
+        {/*<GiftedChat
           messages={messages}
           onSend={messages => this._onSend(messages)}
           showUserAvatar={true}
           user={{
             _id: this.context.user_id,
           }}
-        />
+        />*/}
       </View>
     );
   }

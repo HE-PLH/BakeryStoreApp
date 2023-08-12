@@ -5,7 +5,7 @@ import {
   TextInput,
   FlatList,
   StyleSheet,
-    Button,
+  Button,
   TouchableOpacity,
   Alert,
 } from 'react-native';
@@ -18,40 +18,51 @@ import ListCard from '../components/ListCard';
 import {getSession, getToken, getUser} from '../utils/common';
 // import NavHeaderRight from "../components/NavHeaderRight";
 import {AppContext} from './../../GlobalContext';
+import Header from '../components/Header';
 
-const BASE_URL =
-  'https://tamupatisserieserver-production.up.railway.app/api/v1';
+const TOP_BASE_URL = 'https://tamupatisserieserver-production.up.railway.app';
+const BASE_URL = 'https://tamupatisserieserver-production.up.railway.app/api/v1';
 // const BASE_URL = 'http://192.168.100.5:8000/api/v1';
 
-const ConfirmOrder = props => {
+const MyOrders = props => {
   const [foods, setFoods] = useState([]);
   const [query, setQuery] = useState('');
   const [initial_list, setInitialList] = useState([]);
   const [total, setTotal] = useState(0);
-  const {cart_items, shipping_details, removeCartItem} = useContext(AppContext);
+  const {cart_items, removeCartItem} = useContext(AppContext);
 
   useEffect(() => {
-    setFoods(cart_items);
+    /*setFoods(cart_items);
     setInitialList(cart_items);
-    let amount = cart_items.reduce((acc, item) => {
-      return acc + parseFloat(item.price) * parseFloat(item.qty);
-    }, 0);
-    setTotal(amount);
-
-    /*async function fetchData() {
+    let amount = 0;
+    if (cart_items.length) {
+      amount = cart_items.reduce((acc, item) => {
+        return acc + parseFloat(item.price) * parseFloat(item.qty);
+      }, 0);
+    }
+    setTotal(amount);*/
+    async function fetchData() {
       try {
+        const user = await getUser();
         const token = await getToken();
-        console.log(token);
-        const res = await _axios.get(`${BASE_URL}/inventory`, {
-          headers: {Authorization: `Bearer ${token}`},
+        // console.log(user);
+        getSession().then(async session => {
+          const res = await _axios.post(
+            `${BASE_URL}/get-user-orders/`,
+            {user: session.user.id},
+            {
+              headers: {Authorization: `Bearer ${session.token}`},
+            },
+          );
+          // console.log(res.data);
+          setFoods(res.data);
         });
-        setFoods(res.data);
       } catch (err) {
         console.log('err: ', err);
       }
-    }*/
-    // fetchData();
-  }, [cart_items, shipping_details]);
+    }
+    fetchData();
+  }, []);
 
   const onChangeQuery = text => {
     setQuery(text);
@@ -99,108 +110,56 @@ const ConfirmOrder = props => {
   };
 
   const renderFood = ({item}) => {
-    if (item && !(item.images.indexOf('https') > -1)) {
-      item.images = item.images ? item.images.replace('http', 'https') : '';
-    }
-    console.log(item);
+    // if (item && !(item.images.indexOf('https') > -1)) {
+    //   item.images = item.images ? item.images.replace('http', 'https') : '';
+    // }
+
     // item.images = item.images ? item.images.replace('http', 'https') : '';
-    return (
-      <CartListCard
-        item={item}
-        viewItem={viewItem}
-        removeFromCart={removeFromCart}
-      />
-    );
-  };
-
-  function confirmMyOrder() {
-    async function sendData() {
-      try {
-        const token = await getToken();
-        const user = await getUser();
-        console.log(token);
-        let dt = {
-          products: cart_items,
-          shipping_details,
-          user: JSON.parse(user).id
-        }
-
-        console.log(dt)
-        const res = await _axios.post(`${BASE_URL}/confirm-order/`, dt, {
-          headers: {Authorization: `Bearer ${token}`},
-        });
-        if(res.status === 201){
-
-          props.navigation.navigate('Thankyou');
-        }
-        console.log(res.data);
-
-      } catch (err) {
-        console.log('err: ', err);
-      }
+    if (item.product_obj && !(item.product_obj.images.indexOf('https') > -1)) {
+      item.product_obj.images = item.product_obj.images
+        ? TOP_BASE_URL + item.product_obj.images.replace('http', 'https')
+        : '';
     }
-    sendData();
-  }
+    // console.log('item', item.product_obj);
+    // console.log(item);
+    // item.images = item.images ? item.images.replace('http', 'https') : '';
+    return <ListCard item={item.product_obj} viewItem={viewItem} />;
+  };
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.topWrapper}>
-        <View style={styles.textInputWrapper}>
-          <TextInput
-            style={styles.textInput}
-            onChangeText={onChangeQuery}
-            value={query}
-            placeholder={'search?'}
-          />
-        </View>
-
-        <View style={styles.buttonWrapper}>
-          <Button onPress={filterList} title="Go" color="#c53c3c" />
-        </View>
-      </View>
-      <View>
-        <FlatList
-          data={foods}
-          renderItem={renderFood}
-          contentContainerStyle={styles.list}
-          keyExtractor={item => item.id.toString()}
-        />
-        <Text style={{fontSize: 24, color: 'white', textDecorationLine: 'underline'}}>Shipping Details</Text>
-        <View
-          style={{
-            height: 100,
-            display: 'flex',
-            justifyContent: 'center',
-            width: '100%',
-          }}>
-          {(() => {
+      {foods
+        ? (() => {
             let temp = [];
-            for (let item in shipping_details) {
+
+            for (let item in foods) {
               temp.push(
-                <View
-                  style={{
-                    display: 'flex',
-                    width: '100%',
-                    borderWidth: 1,
-                    borderStyle: 'solid',
-                  }}>
-                  <Text style={{fontSize: 16, color: 'white'}}>{item}: {shipping_details[item]}</Text>
+                <View>
+                  <Header>{'Order' + foods[item].order.id}</Header>
+                  <Text>{foods[item].order.order_date}</Text>
+
+                  {foods[item].data[0].map(it => {
+                    return renderFood({item: it});
+                  })}
+                  {/*<FlatList
+                    data={foods[item].data[0]}
+                    renderItem={renderFood}
+                    contentContainerStyle={styles.list}
+                    // keyExtractor={it => it.data.id.toString()}
+                  />*/}
                 </View>,
               );
             }
             return temp;
-          })().map(el => el)}
-        </View>
-      </View>
-      <View
-        style={{
-          height: 100,
-          display: 'flex',
-          justifyContent: 'center',
-          position: 'absolute',
-          bottom: 0,
-          width: '100%',
-        }}>
+          })().map(el => el)
+        : null}
+      {/*<FlatList
+        data={foods}
+        renderItem={renderFood}
+        contentContainerStyle={styles.list}
+        keyExtractor={item => item.id.toString()}
+      />*/}
+      {/*<View style={{height: 100, display: 'flex', justifyContent: 'center'}}>
         <View
           style={{
             display: 'flex',
@@ -216,18 +175,18 @@ const ConfirmOrder = props => {
         <Btn
           mode="contained"
           onPress={() => {
-            confirmMyOrder();
+            props.navigation.navigate('Shipping');
           }}>
-          Confirm
+          Proceed to Checkout
         </Btn>
-      </View>
+      </View>*/}
     </View>
   );
 };
 
 import Icon from 'react-native-vector-icons/Octicons';
 import CartListCard from '../components/CartListCard';
-import Header from '../components/Header';
+
 import Btn from '../components/Button';
 
 const MenuIcon = ({navigate}) => (
@@ -255,6 +214,7 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     flex: 1,
+    overflow: 'scroll',
     padding: 10,
   },
   topWrapper: {
@@ -276,4 +236,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConfirmOrder;
+export default MyOrders;

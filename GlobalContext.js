@@ -66,6 +66,12 @@ export class AppContextProvider extends React.Component {
     }
   };
 
+  clearCart = () => {
+    this.setState({
+      cart_items: [],
+    });
+  };
+
   render() {
     return (
       <AppContext.Provider
@@ -75,6 +81,7 @@ export class AppContextProvider extends React.Component {
           setRoom: this.setRoom,
           removeCartItem: this.removeCartItem,
           setShippingDetails: this.setShippingDetails,
+          clearCart: this.clearCart,
         }}>
         {this.props.children}
       </AppContext.Provider>

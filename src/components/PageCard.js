@@ -6,7 +6,7 @@ import Config from 'react-native-config';
 import SimpleStepper from 'react-native-simple-stepper';
 const screenWidth = Dimensions.get('window').width;
 
-const BASE_URL = 'https://tamuserver-production.up.railway.app/api/v1';
+const BASE_URL = 'https://tamupatisserieserver-production.up.railway.app/api/v1';
 
 const PageCard = ({item, qty, qtyChanged, addToCart}) => {
   const {id, images, price, quantity} = item;

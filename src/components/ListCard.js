@@ -7,7 +7,7 @@ const ListCard = ({item, viewItem}) => {
       onPress={() => {
         viewItem(item);
       }}>
-      <View style={styles.wrapper}>
+      <View key={item.id} style={styles.wrapper}>
         <View style={styles.imageWrapper}>
           <Image
             style={styles.image}

@@ -5,6 +5,7 @@ import {
   TextInput,
   FlatList,
   StyleSheet,
+    Button,
   TouchableOpacity, Alert,
 } from 'react-native';
 import {_axios} from './../utils/_axios';
@@ -18,7 +19,7 @@ import {getToken} from '../utils/common';
 import {AppContext} from './../../GlobalContext';
 
 const BASE_URL =
-  'https://tamuserver-production.up.railway.app/api/v1';
+  'https://tamupatisserieserver-production.up.railway.app/api/v1';
 // const BASE_URL = 'http://192.168.100.5:8000/api/v1';
 
 const Cart = props => {
@@ -31,9 +32,12 @@ const Cart = props => {
   useEffect(() => {
     setFoods(cart_items);
     setInitialList(cart_items);
-    let amount = cart_items.reduce((acc, item) => {
-      return acc + parseFloat(item.price)*parseFloat(item.qty);
-    }, 0);
+    let amount = 0;
+    if (cart_items.length) {
+      amount = cart_items.reduce((acc, item) => {
+        return acc + parseFloat(item.price) * parseFloat(item.qty);
+      }, 0);
+    }
     setTotal(amount);
     /*async function fetchData() {
       try {
@@ -140,10 +144,10 @@ const Cart = props => {
           }}>
           <Text style={{fontSize: 26}}>Total: {total}</Text>
         </View>
-        <Button mode="contained" onPress={()=>{
+        <Btn mode="contained" onPress={()=>{
           props.navigation.navigate('Shipping');
         }
-        }>Proceed to Checkout</Button>
+        }>Proceed to Checkout</Btn>
       </View>
     </View>
   );
@@ -152,7 +156,7 @@ const Cart = props => {
 import Icon from 'react-native-vector-icons/Octicons';
 import CartListCard from '../components/CartListCard';
 import Header from '../components/Header';
-import Button from '../components/Button';
+import Btn from '../components/Button';
 
 const MenuIcon = ({navigate}) => (
   <Icon

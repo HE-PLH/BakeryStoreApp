@@ -20,9 +20,9 @@ export default function Shipping({navigation}) {
     value: '',
     error: 'Name is empty',
   });
-  const [country, setCountry] = useState({
+  const [county, setCounty] = useState({
     value: '',
-    error: 'Country cannot be empty',
+    error: 'County cannot be empty',
   });
   const [city, setCity] = useState({
     value: '',
@@ -35,32 +35,32 @@ export default function Shipping({navigation}) {
 
   useEffect(() => {
     setName({value: shipping_details.name, error: ''});
-    setCountry({value: shipping_details.country, error: ''});
+    setCounty({value: shipping_details.county, error: ''});
     setCity({value: shipping_details.city, error: ''});
     setPhone({value: shipping_details.phone, error: ''});
   }, [shipping_details]);
   const onShippingPressed = () => {
     const nameError = nameValidator(name.value, name.error);
-    const countryError = nameValidator(country.value, country.error);
+    const countyError = nameValidator(county.value, county.error);
     const cityError = nameValidator(city.value, city.error);
     const phoneError = nameValidator(phone.value, phone.error);
 
-    if (countryError || cityError || nameError || phoneError) {
+    if (countyError || cityError || nameError || phoneError) {
       setName({...name, error: nameError});
-      setCountry({...country, error: countryError});
+      setCounty({...county, error: countyError});
       setCity({...city, error: cityError});
       setPhone({...phone, error: phoneError});
       return;
     }
 
     console.log(name);
-    console.log(country);
+    console.log(county);
     console.log(city);
     console.log(phone);
 
     let formObject = {
       name: name.value,
-      country: country.value,
+      county: county.value,
       city: city.value,
       phone: phone.value,
     };
@@ -100,18 +100,18 @@ export default function Shipping({navigation}) {
         errorText={name.error}
       />
       <TextInput
-        label="Country"
+        label="County"
         returnKeyType="next"
-        value={country.value}
+        value={county.value}
         onChangeText={text =>
-          setCountry({value: text, error: 'Country cannot be empty'})
+          setCounty({value: text, error: 'County cannot be empty'})
         }
-        error={!!country.error}
-        errorText={country.error}
+        error={!!county.error}
+        errorText={county.error}
         autoCapitalize="none"
-        autoCompleteType="country"
-        textContentType="countryName"
-        keyboardType="country-name"
+        autoCompleteType="county"
+        textContentType="countyName"
+        keyboardType="county-name"
       />
       <TextInput
         label="City"

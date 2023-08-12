@@ -2,13 +2,15 @@ import React, {useState, useContext, useEffect, Component} from 'react';
 import {
   View,
   Text,
-  Button,
   TextInput,
   FlatList,
   StyleSheet,
+  Button,
   TouchableOpacity,
 } from 'react-native';
 import {_axios} from './../utils/_axios';
+
+import Btn from './../components/Button';
 
 import Config from 'react-native-config';
 
@@ -17,12 +19,12 @@ import ListCard from '../components/ListCard';
 import {getToken} from '../utils/common';
 // import NavHeaderRight from "../components/NavHeaderRight";
 
-const BASE_URL =
-  'https://tamuserver-production.up.railway.app/api/v1';
+const BASE_URL = 'https://tamupatisserieserver-production.up.railway.app/api/v1';
 // const BASE_URL = 'http://192.168.100.5:8000/api/v1';
 
 const FoodList = props => {
   const [foods, setFoods] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [initial_list, setInitialList] = useState([]);
   const [query, setQuery] = useState('');
 
@@ -47,16 +49,26 @@ const FoodList = props => {
     setQuery(text);
   };
 
-  const filterList = async () => {
-    if (query === '') {
-      setFoods(initial_list);
-    } else {
+  const filterList = async category => {
+    if (categories.indexOf(category) > -1) {
       const foods_response = initial_list.filter(item => {
-        return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1;
+        return item.category.toLowerCase().indexOf(category.toLowerCase()) > -1;
       });
+
 
       setFoods(foods_response);
       setQuery('');
+    } else {
+      if (query === '') {
+        setFoods(initial_list);
+      } else {
+        const foods_response = initial_list.filter(item => {
+          return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1;
+        });
+
+        setFoods(foods_response);
+        setQuery('');
+      }
     }
   };
 
@@ -69,10 +81,13 @@ const FoodList = props => {
   };
 
   const renderFood = ({item}) => {
+    if (categories.indexOf(item.category) <= -1) {
+      setCategories([...categories, item.category]);
+    }
     if (item && !(item.images.indexOf('https') > -1)) {
       item.images = item.images ? item.images.replace('http', 'https') : '';
     }
-    console.log(item);
+    // console.log(item);
     // item.images = item.images ? item.images.replace('http', 'https') : '';
     return <ListCard item={item} viewItem={viewItem} />;
   };
@@ -93,7 +108,35 @@ const FoodList = props => {
           <Button onPress={filterList} title="Go" color="#c53c3c" />
         </View>
       </View>
-
+      <View
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          overflow: 'scroll',
+          width: '100%',
+          height: 30,
+          marginTop: 5,
+          margin: 5,
+        }}>
+        {categories.map(el => {
+          return (
+            <View style={{marginRight: 5}}>
+              <Button
+                style={{
+                  minWidth: 50,
+                  height: '100%',
+                  borderRadius: 20,
+                }}
+                mode={'outlined'}
+                title={el}
+                onPress={() => {
+                  filterList(el);
+                }}
+              />
+            </View>
+          );
+        })}
+      </View>
       <FlatList
         data={foods}
         renderItem={renderFood}
