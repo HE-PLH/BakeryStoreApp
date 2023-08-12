@@ -1,12 +1,14 @@
 // ./screens/About.js
 
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, Text, Image} from 'react-native';
+import {View, StyleSheet, Text, Image, Dimensions} from 'react-native';
 import {getToken} from '../utils/common';
 import {_axios} from '../utils/_axios';
 import Header from '../components/Header';
 const BASE_URL =
   'https://tamupatisserieserver-production.up.railway.app/api/v1';
+const screenWidth = Dimensions.get('window').width;
+
 
 const Tutorials = () => {
   const [tutorial, setTutorial] = useState([]);
@@ -61,7 +63,7 @@ const Tutorials = () => {
                     <Text>
                         {item.description}
                     </Text>
-                    <Image style={styles.image} source={{uri: `${images}`}} />
+                    <Image style={styles.image} source={{uri: `${item.images}`}} />
                 </View>
             </View>
                 ;
@@ -77,6 +79,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
+  },
+    image: {
+    width: screenWidth - 20,
+    height: 300,
+    marginBottom: 5,
   },
 });
 
