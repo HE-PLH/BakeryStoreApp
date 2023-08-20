@@ -122,7 +122,7 @@ const ConfirmOrder = props => {
         let dt = {
           products: cart_items,
           shipping_details,
-          user: JSON.parse(user).id
+          user: (user).id
         }
 
         console.log(dt)

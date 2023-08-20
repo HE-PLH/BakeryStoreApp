@@ -54,8 +54,8 @@ import {useSelector} from 'react-redux';
 
 import _Store from './src/screens/Main/Store';
 
-import MyOrders from "./src/screens/MyOrders";
-import Tutorials from "./src/screens/Tutorials";
+import MyOrders from './src/screens/MyOrders';
+import Tutorials from './src/screens/Tutorials';
 
 import {
   AuthStackParamList,
@@ -72,13 +72,14 @@ import {
   ResetPasswordScreen,
   StartScreen,
 } from './src/screens';
-import {getSession, getToken} from './src/utils/common';
+import {getSession, getToken, getUser} from './src/utils/common';
 import FoodDetails from './src/screens/FoodDetails';
 import {AppContextProvider} from './GlobalContext';
 import {_axios} from './src/utils/_axios';
-import Cart from "./src/screens/Cart";
-import Shipping from "./src/screens/shipping";
-import Thankyou from "./src/screens/Thankyou";
+import Cart from './src/screens/Cart';
+import Shipping from './src/screens/shipping';
+import Thankyou from './src/screens/Thankyou';
+import InventorySummary from './src/screens/inventory_summary';
 
 require('react-native-ui-lib/config').setConfig({appScheme: 'default'});
 enableLatestRenderer();
@@ -117,10 +118,10 @@ function Navigation({colorScheme}: {colorScheme: ColorSchemeName}) {
       console.log(token, role);
       if (token) {
         if (role === 'user') {
-          setUser({token, role});
+          setUser(role);
           // navigation.navigate('Root');
         } else if (role === 'admin') {
-          setUser(token, role);
+          setUser(role);
           // navigation.navigate('RootUser');
         }
 
@@ -136,10 +137,11 @@ function Navigation({colorScheme}: {colorScheme: ColorSchemeName}) {
   return (
     <NavigationContainer
       theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      {console.log('My user: ', user)}
       {user ? (
-        user.user === 'user' ? (
+        user === 'user' ? (
           <UserRootNavigator />
-        ) : user.user === 'admin' ? (
+        ) : user === 'admin' ? (
           <RootNavigator />
         ) : (
           <UserRootNavigator />
@@ -187,7 +189,7 @@ function RootNavigator() {
   );
 }
 
-function UserRootNavigator() {
+function UserRootNavigator({navigation}) {
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -247,8 +249,51 @@ function AuthNavigator() {
         options={{title: 'Register', headerShown: false}}
       />
 
-      <AuthStack.Screen name="Home" options={{title: 'Home', headerShown: false}} component={UserRootNavigator} />
+      <AuthStack.Screen
+        name="Home"
+        options={{title: 'Home', headerShown: false}}
+        component={AdminOrUser}
+      />
     </AuthStack.Navigator>
+  );
+}
+
+function AdminOrUser() {
+  const [user, setUser] = useState(false);
+
+  useEffect(() => {
+    console.log('hiiii');
+    getSession().then(({token, role}) => {
+      console.log(token, role);
+      if (token) {
+        if (role === 'user') {
+          setUser(role);
+          // navigation.navigate('Root');
+        } else if (role === 'admin') {
+          setUser(role);
+          // navigation.navigate('RootUser');
+        }
+
+        // navigation.navigate('Root');
+      } else {
+        setUser(false);
+      }
+    });
+  }, []);
+  return (
+    <>
+      {user ? (
+        user === 'user' ? (
+          <UserRootNavigator />
+        ) : user === 'admin' ? (
+          <RootNavigator />
+        ) : (
+          <UserRootNavigator />
+        )
+      ) : (
+        <AuthNavigator />
+      )}
+    </>
   );
 }
 
@@ -352,10 +397,10 @@ function BottomTabNavigator() {
         tabBarInactiveBackgroundColor: Colors.$backgroundDefault,
       }}>
       <BottomTab.Screen
-        name="Store"
-        component={Store}
+        name="InventorySummary"
+        component={InventorySummary}
         options={{
-          title: 'Store',
+          title: 'InventorySummary',
           tabBarIcon: ({color}) => (
             // <TabBarIcon name="shoppingcart" color={color} />
             <Text style={{color: Colors.white}}>Inventory</Text>
@@ -383,6 +428,11 @@ function BottomTabNavigator() {
             <Text style={{color: Colors.white}}>Contact us</Text>
           ),
         }}
+      />
+      <Stack.Screen
+        name="Onboarding"
+        component={StartScreen}
+        options={{headerShown: false}}
       />
 
       {/*<BottomTab.Screen
@@ -422,7 +472,7 @@ function UserBottomTabNavigator() {
         name="CakeList"
         component={FoodListNavigator}
         options={{
-            headerShown: false,
+          headerShown: false,
           title: 'CakeList',
           tabBarIcon: ({color}) => (
             <TabBarIcon name="list" color={'#fff'} size={30} />
@@ -430,33 +480,39 @@ function UserBottomTabNavigator() {
           ),
         }}
       />
-        <BottomTab.Screen
+      <BottomTab.Screen
         name="Tutorials"
         component={Tutorials}
         options={{
           title: 'Tutorials',
           lazy: false,
-          tabBarIcon: ({color}) => <TabBarIcon size={30} name="graduation-cap" color={'#fff'} />,
+          tabBarIcon: ({color}) => (
+            <TabBarIcon size={30} name="graduation-cap" color={'#fff'} />
+          ),
         }}
       />
-        <BottomTab.Screen
+      <BottomTab.Screen
         name="Profile"
         component={Profile}
         options={{
           title: 'Profile',
           lazy: false,
-            headerShown: true,
-          tabBarIcon: ({color}) => <TabBarIcon size={30} name="user" color={'#fff'} />,
+          headerShown: true,
+          tabBarIcon: ({color}) => (
+            <TabBarIcon size={30} name="user" color={'#fff'} />
+          ),
         }}
       />
-        <BottomTab.Screen
+      <BottomTab.Screen
         name="MyOrders"
         component={MyOrders}
         options={{
           title: 'MyOrders',
           lazy: false,
-            headerShown: true,
-          tabBarIcon: ({color}) => <TabBarIcon size={30} name="credit-card" color={'#fff'} />,
+          headerShown: true,
+          tabBarIcon: ({color}) => (
+            <TabBarIcon size={30} name="credit-card" color={'#fff'} />
+          ),
         }}
       />
 
@@ -473,6 +529,11 @@ function UserBottomTabNavigator() {
         }}
       />
 
+      <AuthStack.Screen
+        name="Onboarding"
+        component={StartScreen}
+        options={{headerShown: false}}
+      />
       {/*<BottomTab.Screen
         name="Orders"
         component={Orders}

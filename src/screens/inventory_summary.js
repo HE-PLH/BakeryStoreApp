@@ -27,8 +27,8 @@ const BASE_URL =
   'https://tamupatisserieserver-production.up.railway.app/api/v1';
 // const BASE_URL = 'http://192.168.100.5:8000/api/v1';
 
-const MyOrders = props => {
-  const [foods, setFoods] = useState([]);
+const InventorySummary = props => {
+  const [foods, setInventory] = useState([]);
   const [query, setQuery] = useState('');
   const [initial_list, setInitialList] = useState([]);
   const [total, setTotal] = useState(0);
@@ -53,14 +53,14 @@ const MyOrders = props => {
       // console.log(user);
       getSession().then(async session => {
         const res = await _axios.post(
-          `${BASE_URL}/get-user-orders/`,
+          `${BASE_URL}/get-total-ingredients/`,
           {user: session.user.id},
           {
             headers: {Authorization: `Bearer ${session.token}`},
           },
         );
         console.log(res.data);
-        setFoods(res.data);
+        setInventory(res.data);
         f();
       });
     } catch (err) {
@@ -71,7 +71,7 @@ const MyOrders = props => {
   }
 
   useEffect(() => {
-    /*setFoods(cart_items);
+    /*setInventory(cart_items);
     setInitialList(cart_items);
     let amount = 0;
     if (cart_items.length) {
@@ -89,13 +89,13 @@ const MyOrders = props => {
 
   const filterList = async () => {
     if (query === '') {
-      setFoods(initial_list);
+      setInventory(initial_list);
     } else {
       const foods_response = initial_list.filter(item => {
         return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1;
       });
 
-      setFoods(foods_response);
+      setInventory(foods_response);
       setQuery('');
     }
   };
@@ -261,4 +261,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MyOrders;
+export default InventorySummary;

@@ -7,6 +7,8 @@ import {
   StyleSheet,
   Button,
   TouchableOpacity,
+  RefreshControl,
+  Alert,
 } from 'react-native';
 import {_axios} from './../utils/_axios';
 
@@ -19,7 +21,8 @@ import ListCard from '../components/ListCard';
 import {getToken} from '../utils/common';
 // import NavHeaderRight from "../components/NavHeaderRight";
 
-const BASE_URL = 'https://tamupatisserieserver-production.up.railway.app/api/v1';
+const BASE_URL =
+  'https://tamupatisserieserver-production.up.railway.app/api/v1';
 // const BASE_URL = 'http://192.168.100.5:8000/api/v1';
 
 const FoodList = props => {
@@ -27,21 +30,35 @@ const FoodList = props => {
   const [categories, setCategories] = useState([]);
   const [initial_list, setInitialList] = useState([]);
   const [query, setQuery] = useState('');
+  const [refreshing, setRefreshing] = React.useState(false);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const token = await getToken();
-        console.log(token);
-        const res = await _axios.get(`${BASE_URL}/product`, {
-          headers: {Authorization: `Bearer ${token}`},
-        });
-        setFoods(res.data);
-        setInitialList(res.data);
-      } catch (err) {
-        console.log('err: ', err);
-      }
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    fetchData(() => {
+      setRefreshing(false);
+    });
+    /*setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);*/
+  }, []);
+
+  async function fetchData(f = () => {}) {
+    try {
+      const token = await getToken();
+      console.log(token);
+      const res = await _axios.get(`${BASE_URL}/product`, {
+        headers: {Authorization: `Bearer ${token}`},
+      });
+      setFoods(res.data);
+      setInitialList(res.data);
+      f();
+    } catch (err) {
+      Alert.alert('Network Error', 'err: ' + err);
+      f();
+      console.log('err: ', err);
     }
+  }
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -54,7 +71,6 @@ const FoodList = props => {
       const foods_response = initial_list.filter(item => {
         return item.category.toLowerCase().indexOf(category.toLowerCase()) > -1;
       });
-
 
       setFoods(foods_response);
       setQuery('');
@@ -142,6 +158,9 @@ const FoodList = props => {
         renderItem={renderFood}
         contentContainerStyle={styles.list}
         keyExtractor={item => item.id.toString()}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </View>
   );
