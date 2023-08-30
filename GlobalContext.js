@@ -14,6 +14,7 @@ export class AppContextProvider extends React.Component {
       country: '',
       city: '',
       phone: '',
+      preferredDeliveryDateTime: new Date(),
     },
   };
 

@@ -23,8 +23,7 @@ import {AppContext} from './../../GlobalContext';
 import Header from '../components/Header';
 
 const TOP_BASE_URL = 'https://tamupatisserieserver-production.up.railway.app';
-const BASE_URL =
-  'https://tamupatisserieserver-production.up.railway.app/api/v1';
+const BASE_URL = 'https://tamupatisserieserver-production.up.railway.app/api/v1';
 // const BASE_URL = 'http://192.168.100.5:8000/api/v1';
 
 const InventorySummary = props => {
@@ -94,6 +93,16 @@ const InventorySummary = props => {
       const foods_response = initial_list.filter(item => {
         return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1;
       });
+      /*let temp = [];
+      if (foods_response){
+        for (let item in foods_response) {
+          let tmp = {};
+          tmp.name = item;
+          tmp.quantity = foods_response[item].total_quantity;
+          tmp.id = foods_response[item].id;
+          temp.push(tmp);
+        }
+      }*/
 
       setInventory(foods_response);
       setQuery('');
@@ -142,7 +151,12 @@ const InventorySummary = props => {
     // console.log('item', item.product_obj);
     // console.log(item);
     // item.images = item.images ? item.images.replace('http', 'https') : '';
-    return <ListCard item={item.product_obj} viewItem={viewItem} />;
+    return (
+      <View>
+        <Text>{item.name}</Text>
+        <Text>{item.quantity}</Text>
+      </View>
+    );
   };
 
   return (
@@ -158,13 +172,19 @@ const InventorySummary = props => {
 
               for (let item in foods) {
                 temp.push(
-                  <View>
-                    <Header>{'Order' + foods[item].order.id}</Header>
-                    <Text>{foods[item].order.order_date}</Text>
+                  <View style={{marginBottom: 5}}>
+                    <Text style={{fontSize: 26, backgroundColor: 'black'}}>
+                      {'Item: ' + item}
+                    </Text>
 
-                    {foods[item].data[0].map(it => {
+                    <Text style={{backgroundColor: 'black'}}>
+                      {' '}
+                      {'Remaining: ' + foods[item].total_quantity}
+                    </Text>
+
+                    {/*{foods[item].data[0].map(it => {
                       return renderFood({item: it});
-                    })}
+                    })}*/}
                     {/*<FlatList
                     data={foods[item].data[0]}
                     renderItem={renderFood}

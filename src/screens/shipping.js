@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import {Text} from 'react-native-paper';
 import Background from '../components/Background';
 import Logo from '../components/Logo';
@@ -13,6 +13,7 @@ import {nameValidator} from '../helpers/nameValidator';
 import {_axios} from './../utils/_axios';
 import setUserSession, {getUser} from './../utils/common';
 import {AppContext} from '../../GlobalContext';
+import DateTimeField from '../components/DateTimeField';
 
 export default function Shipping({navigation}) {
   const {shipping_details, setShippingDetails} = useContext(AppContext);
@@ -32,24 +33,41 @@ export default function Shipping({navigation}) {
     value: '',
     error: 'Enter your phone number',
   });
+  const [preferredDeliveryDateTime, setPreferredDeliveryDateTime] = useState({
+    value: '',
+    error: 'Enter your preferredDeliveryDateTime',
+  });
+  const [date, setDate] = useState(new Date());
 
   useEffect(() => {
     setName({value: shipping_details.name, error: ''});
     setCounty({value: shipping_details.county, error: ''});
     setCity({value: shipping_details.city, error: ''});
     setPhone({value: shipping_details.phone, error: ''});
+    setPreferredDeliveryDateTime({
+      value: shipping_details.preferredDeliveryDateTime,
+      error: '',
+    });
   }, [shipping_details]);
   const onShippingPressed = () => {
     const nameError = nameValidator(name.value, name.error);
     const countyError = nameValidator(county.value, county.error);
     const cityError = nameValidator(city.value, city.error);
     const phoneError = nameValidator(phone.value, phone.error);
+    const preferredDeliveryDateTimeError = nameValidator(
+      preferredDeliveryDateTime.value,
+      preferredDeliveryDateTime.error,
+    );
 
     if (countyError || cityError || nameError || phoneError) {
       setName({...name, error: nameError});
       setCounty({...county, error: countyError});
       setCity({...city, error: cityError});
       setPhone({...phone, error: phoneError});
+      setPhone({
+        ...preferredDeliveryDateTime,
+        error: preferredDeliveryDateTimeError,
+      });
       return;
     }
 
@@ -57,15 +75,18 @@ export default function Shipping({navigation}) {
     console.log(county);
     console.log(city);
     console.log(phone);
+    console.log(preferredDeliveryDateTime);
 
     let formObject = {
       name: name.value,
       county: county.value,
       city: city.value,
       phone: phone.value,
+      preferredDeliveryDateTime: date,
     };
-    console.log('formObj', formObject)
-    setShippingDetails(formObject, ()=>{
+    // console.log('formObj', formObject);
+
+    setShippingDetails(formObject, () => {
       navigation.navigate('Confirm Order');
     });
 
@@ -88,7 +109,9 @@ export default function Shipping({navigation}) {
   };
 
   return (
+      <ScrollView>
     <Background>
+
       <BackButton goBack={navigation.goBack} />
       <Header>Shipping Details</Header>
       <TextInput
@@ -99,6 +122,7 @@ export default function Shipping({navigation}) {
         error={!!name.error}
         errorText={name.error}
       />
+
       <TextInput
         label="County"
         returnKeyType="next"
@@ -133,13 +157,47 @@ export default function Shipping({navigation}) {
         error={!!phone.error}
         errorText={phone.error}
       />
+
+      <TextInput
+        date={date}
+        label="Preferred Delivery Date"
+        returnKeyType="done"
+        disabled
+        // value={preferredDeliveryDateTime.value}
+        value={date.toLocaleString()}
+        onChangeText={text =>
+          setPreferredDeliveryDateTime({
+            value: text,
+            error: 'Enter your Preferred delivery',
+          })
+        }
+        error={!!preferredDeliveryDateTime.error}
+        errorText={preferredDeliveryDateTime.error}
+      />
+      <DateTimeField
+        setDate={setDate}
+        date={date}
+        label="set Preferred Delivery Date"
+        returnKeyType="done"
+        value={preferredDeliveryDateTime.value}
+        onChangeText={text =>
+          setPreferredDeliveryDateTime({
+            value: text,
+            error: 'Enter your Preferred delivery',
+          })
+        }
+        error={!!preferredDeliveryDateTime.error}
+        errorText={preferredDeliveryDateTime.error}
+      />
       <Button
         mode="contained"
         onPress={onShippingPressed}
         style={{marginTop: 24}}>
         Checkout
       </Button>
+
     </Background>
+          </ScrollView>
   );
 }
 

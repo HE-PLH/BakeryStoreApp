@@ -5,7 +5,7 @@ import {
   TextInput,
   FlatList,
   StyleSheet,
-    Button,
+  Button,
   TouchableOpacity,
   Alert,
 } from 'react-native';
@@ -19,8 +19,7 @@ import {getSession, getToken, getUser} from '../utils/common';
 // import NavHeaderRight from "../components/NavHeaderRight";
 import {AppContext} from './../../GlobalContext';
 
-const BASE_URL =
-  'https://tamupatisserieserver-production.up.railway.app/api/v1';
+const BASE_URL = 'https://tamupatisserieserver-production.up.railway.app/api/v1';
 // const BASE_URL = 'http://192.168.100.5:8000/api/v1';
 
 const ConfirmOrder = props => {
@@ -121,20 +120,24 @@ const ConfirmOrder = props => {
         console.log(token);
         let dt = {
           products: cart_items,
-          shipping_details,
-          user: (user).id
-        }
+          shipping_details: {
+            name: shipping_details.name,
+            county: shipping_details.county,
+            city: shipping_details.city,
+            phone: shipping_details.phone,
+            preferredDeliveryDateTime: shipping_details.preferredDeliveryDateTime,
+          },
+          user: user.id,
+        };
 
-        console.log(dt)
+        console.log(dt);
         const res = await _axios.post(`${BASE_URL}/confirm-order/`, dt, {
           headers: {Authorization: `Bearer ${token}`},
         });
-        if(res.status === 201){
-
+        if (res.status === 201) {
           props.navigation.navigate('Thankyou');
         }
         console.log(res.data);
-
       } catch (err) {
         console.log('err: ', err);
       }
@@ -165,7 +168,14 @@ const ConfirmOrder = props => {
           contentContainerStyle={styles.list}
           keyExtractor={item => item.id.toString()}
         />
-        <Text style={{fontSize: 24, color: 'white', textDecorationLine: 'underline'}}>Shipping Details</Text>
+        <Text
+          style={{
+            fontSize: 24,
+            color: 'white',
+            textDecorationLine: 'underline',
+          }}>
+          Shipping Details
+        </Text>
         <View
           style={{
             height: 100,
@@ -184,7 +194,12 @@ const ConfirmOrder = props => {
                     borderWidth: 1,
                     borderStyle: 'solid',
                   }}>
-                  <Text style={{fontSize: 16, color: 'white'}}>{item}: {shipping_details[item]}</Text>
+                  <Text style={{fontSize: 16, color: 'white'}}>
+                    {item}:{' '}
+                    {item === 'preferredDeliveryDateTime'
+                      ? shipping_details[item].toLocaleString()
+                      : shipping_details[item]}
+                  </Text>
                 </View>,
               );
             }

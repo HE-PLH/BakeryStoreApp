@@ -391,7 +391,6 @@ function BottomTabNavigator() {
       initialRouteName="Store"
       screenOptions={{
         tabBarActiveTintColor: Colors.primary,
-        headerShown: false,
         tabBarShowLabel: false,
         tabBarActiveBackgroundColor: Colors.$backgroundDefault,
         tabBarInactiveBackgroundColor: Colors.$backgroundDefault,
@@ -408,27 +407,18 @@ function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="CakeList"
-        component={FoodListNavigator}
+        name="Profile"
+        component={Profile}
         options={{
-          title: 'CakeList',
-          tabBarIcon: ({color}) => (
-            // <TabBarIcon name="shoppingcart" color={color} />
-            <Text style={{color: Colors.white}}>Products</Text>
-          ),
-        }}
-      />
-      <BottomTab.Screen
-        name="ContactDriver"
-        component={ContactDriver}
-        options={{
-          title: 'ContactDriver',
+          title: 'Profile',
           lazy: false,
+          headerShown: true,
           tabBarIcon: ({color}) => (
-            <Text style={{color: Colors.white}}>Contact us</Text>
+            <TabBarIcon size={30} name="user" color={'#fff'} />
           ),
         }}
       />
+
       <Stack.Screen
         name="Onboarding"
         component={StartScreen}
